@@ -1,12 +1,10 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-function Grade(props) {
+function StatisticLine(props) {
   return (
-    <div>
-      <p>
-        {props.grade}: {props.value}
-      </p>
-    </div>
+    <p>
+      {props.text}: {props.value}
+    </p>
   );
 }
 
@@ -19,21 +17,27 @@ function Statistics(props) {
     <>
       <h1>Evaluation results:</h1>
       {count > 0 ? (
-        <div>
+        <>
           {props.grades.map((grade, idx) => (
-            <Grade key={idx} grade={grade} value={props.values[idx]} />
+            <StatisticLine key={idx} text={grade} value={props.values[idx]} />
           ))}
-          <div>
-            <p>All: {count}</p>
-            <p>Average: {(props.values[0] - props.values[2]) / count}</p>
-            <p>Positive: {(props.values[0] / count) * 100}%</p>
-          </div>
-        </div>
+          <StatisticLine text={"All"} value={count} />
+          <StatisticLine text={"Average"} value={(props.values[0] - props.values[2]) / count} />
+          <StatisticLine text={"Positive"} value={`${(props.values[0] / count) * 100}%`} />
+        </>
       ) : (
         <p>No feedback given</p>
       )}
     </>
-  )
+  );
+}
+
+function Button(props) {
+  function handleClick() {
+    props.onClick(props.index);
+  }
+
+  return <button onClick={handleClick}>{props.text}</button>;
 }
 
 function App() {
@@ -51,14 +55,19 @@ function App() {
       <h1>Give us your feedback:</h1>
       <div>
         {grades.map((grade, idx) => (
-          <button key={idx} onClick={() => {
-            handleOnGradeClick(idx);
-          }}>{grade}</button>
+          <Button
+            key={idx}
+            index={idx}
+            text={grade}
+            onClick={handleOnGradeClick}
+          >
+            {grade}
+          </Button>
         ))}
       </div>
       {<Statistics grades={grades} values={values} />}
     </div>
-  )
+  );
 }
 
 export default App;
