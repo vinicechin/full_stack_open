@@ -13,16 +13,25 @@ const App = () => {
   ]
    
   const [selected, setSelected] = useState(0);
+  const [votes, setVotes] = useState(new Array(anecdotes.length).fill(0))
 
   function handleOnGenerateClick() {
     const rand = Math.floor(Math.random() * anecdotes.length);
     setSelected(rand);
   }
 
+  function handleOnVoteClick() {
+    const newVotes = [...votes];
+    newVotes[selected] += 1;
+    setVotes(newVotes);
+  }
+
   return (
     <div>
       <button onClick={handleOnGenerateClick}>Get your daily anecdotes</button>
       <p>{anecdotes[selected]}</p>
+      <button onClick={handleOnVoteClick} >Vote for it!!</button>
+      <p>This anectodes has {votes[selected]} votes</p>
     </div>
   )
 }
