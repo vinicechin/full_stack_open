@@ -2,9 +2,10 @@ import { useState } from "react";
 
 function StatisticLine(props) {
   return (
-    <p>
-      {props.text}: {props.value}
-    </p>
+    <tr>
+      <td>{props.text}</td>
+      <td>{props.value}</td>
+    </tr>
   );
 }
 
@@ -17,14 +18,16 @@ function Statistics(props) {
     <>
       <h1>Evaluation results:</h1>
       {count > 0 ? (
-        <>
-          {props.grades.map((grade, idx) => (
-            <StatisticLine key={idx} text={grade} value={props.values[idx]} />
-          ))}
-          <StatisticLine text={"All"} value={count} />
-          <StatisticLine text={"Average"} value={(props.values[0] - props.values[2]) / count} />
-          <StatisticLine text={"Positive"} value={`${(props.values[0] / count) * 100}%`} />
-        </>
+        <table>
+          <tbody>
+            {props.grades.map((grade, idx) => (
+              <StatisticLine key={idx} text={grade} value={props.values[idx]} />
+            ))}
+            <StatisticLine text={"All"} value={count} />
+            <StatisticLine text={"Average"} value={(props.values[0] - props.values[2]) / count} />
+            <StatisticLine text={"Positive"} value={`${(props.values[0] / count) * 100}%`} />
+          </tbody>
+        </table>
       ) : (
         <p>No feedback given</p>
       )}
