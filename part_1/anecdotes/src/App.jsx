@@ -13,7 +13,8 @@ const App = () => {
   ]
    
   const [selected, setSelected] = useState(0);
-  const [votes, setVotes] = useState(new Array(anecdotes.length).fill(0))
+  const [votes, setVotes] = useState(new Array(anecdotes.length).fill(0));
+  const [mostVoted, setMostVoted] = useState();
 
   function handleOnGenerateClick() {
     const rand = Math.floor(Math.random() * anecdotes.length);
@@ -24,15 +25,33 @@ const App = () => {
     const newVotes = [...votes];
     newVotes[selected] += 1;
     setVotes(newVotes);
+
+    if (mostVoted == null || newVotes[selected] > mostVoted.value) {
+      setMostVoted({
+        idx: selected,
+        value: newVotes[selected],
+      });
+    }
   }
 
   return (
-    <div>
-      <button onClick={handleOnGenerateClick}>Get your daily anecdotes</button>
-      <p>{anecdotes[selected]}</p>
-      <button onClick={handleOnVoteClick} >Vote for it!!</button>
-      <p>This anectodes has {votes[selected]} votes</p>
-    </div>
+    <>
+      <div>
+        <h1>Anecdotes</h1>
+        <button onClick={handleOnGenerateClick}>Get your daily anecdotes</button>
+        <button onClick={handleOnVoteClick} >Vote for it!!</button>
+        <p>{"\""}{anecdotes[selected]}{"\""}</p>
+        <p>This anectodes has {votes[selected]} votes</p>
+      </div>
+      <div>
+        <h1>Anecdote with most votes</h1>
+        {mostVoted != null ? (
+          <p>{"\""}{anecdotes[mostVoted.idx]}{"\""}</p>
+        ) : (
+          <p>No anecdote was voted yet</p>
+        )}
+      </div>
+    </>
   )
 }
 
