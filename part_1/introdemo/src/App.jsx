@@ -1,7 +1,5 @@
 function Header(props) {
-  return (
-    <h1>{props.text}</h1>
-  );
+  return <h1>{props.text}</h1>;
 }
 
 function Part(props) {
@@ -9,51 +7,51 @@ function Part(props) {
     <p>
       {props.label} {props.value}
     </p>
-  )
+  );
 }
 
 function Content(props) {
   return (
     <>
       {props.parts.map((part, idx) => {
-        return (
-          <Part key={idx} label={part.name} value={part.exercises} />
-        )
+        return <Part key={idx} label={part.name} value={part.exercises} />;
       })}
     </>
   );
 }
 
 function Total(props) {
-  return (
-    <p>Number of exercises {props.value}</p>
-  );
+  return <p>Number of exercises {props.value}</p>;
 }
 
 const App = () => {
-  const course = 'Half Stack application development'
-  const part1 = {
-    name: 'Fundamentals of React',
-    exercises: 10
-  }
-  const part2 = {
-    name: 'Using props to pass data',
-    exercises: 7
-  }
-  const part3 = {
-    name: 'State of a component',
-    exercises: 14
-  }
+  const course = "Half Stack application development";
+  const parts = [
+    {
+      name: "Fundamentals of React",
+      exercises: 10,
+    },
+    {
+      name: "Using props to pass data",
+      exercises: 7,
+    },
+    {
+      name: "State of a component",
+      exercises: 14,
+    },
+  ];
 
   return (
     <div>
       <Header text={course} />
-      <Content
-        parts={[part1, part2, part3]}
+      <Content parts={parts} />
+      <Total
+        value={parts.reduce((total, part) => {
+          return total + part.exercises;
+        }, 0)}
       />
-      <Total value={part1.exercises + part2.exercises + part3.exercises} />
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
