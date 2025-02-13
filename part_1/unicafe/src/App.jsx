@@ -10,6 +10,34 @@ function Grade(props) {
   );
 }
 
+function Statistics(props) {
+  function buildGradeStatistics() {
+    const count = props.values.reduce((res, value) => {
+      return res + value;
+    });
+    const divider = (count > 0 ? count : 1);
+    return (
+      <div>
+        <p>All: {count}</p>
+        <p>Average: {(props.values[0] - props.values[2]) / divider}</p>
+        <p>Positive: {(props.values[0] / divider) * 100}%</p>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <h1>Evaluation results:</h1>
+      <div>
+        {props.grades.map((grade, idx) => (
+          <Grade key={idx} grade={grade} value={props.values[idx]} />
+        ))}
+        {buildGradeStatistics()}
+      </div>
+    </>
+  )
+}
+
 function App() {
   const grades = ["Good", "Neutral", "Bad"];
   const [values, setValues] = useState([0, 0, 0]);
@@ -18,20 +46,6 @@ function App() {
     const newValues = [...values];
     newValues[index] += 1;
     setValues(newValues);
-  }
-
-  function buildGradeStatistics() {
-    const count = values.reduce((res, value) => {
-      return res + value;
-    });
-    const divider = (count > 0 ? count : 1);
-    return (
-      <div>
-        <p>All: {count}</p>
-        <p>Average: {(values[0] - values[2]) / divider}</p>
-        <p>Positive: {(values[0] / divider) * 100}%</p>
-      </div>
-    );
   }
 
   return (
@@ -44,13 +58,7 @@ function App() {
           }}>{grade}</button>
         ))}
       </div>
-      <h1>Evaluation results:</h1>
-      <div>
-        {grades.map((grade, idx) => (
-          <Grade key={idx} grade={grade} value={values[idx]} />
-        ))}
-        {buildGradeStatistics()}
-      </div>
+      {<Statistics grades={grades} values={values} />}
     </div>
   )
 }
