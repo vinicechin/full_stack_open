@@ -11,29 +11,27 @@ function Grade(props) {
 }
 
 function Statistics(props) {
-  function buildGradeStatistics() {
-    const count = props.values.reduce((res, value) => {
-      return res + value;
-    });
-    const divider = (count > 0 ? count : 1);
-    return (
-      <div>
-        <p>All: {count}</p>
-        <p>Average: {(props.values[0] - props.values[2]) / divider}</p>
-        <p>Positive: {(props.values[0] / divider) * 100}%</p>
-      </div>
-    );
-  }
+  const count = props.values.reduce((res, value) => {
+    return res + value;
+  });
 
   return (
     <>
       <h1>Evaluation results:</h1>
-      <div>
-        {props.grades.map((grade, idx) => (
-          <Grade key={idx} grade={grade} value={props.values[idx]} />
-        ))}
-        {buildGradeStatistics()}
-      </div>
+      {count > 0 ? (
+        <div>
+          {props.grades.map((grade, idx) => (
+            <Grade key={idx} grade={grade} value={props.values[idx]} />
+          ))}
+          <div>
+            <p>All: {count}</p>
+            <p>Average: {(props.values[0] - props.values[2]) / count}</p>
+            <p>Positive: {(props.values[0] / count) * 100}%</p>
+          </div>
+        </div>
+      ) : (
+        <p>No feedback given</p>
+      )}
     </>
   )
 }
