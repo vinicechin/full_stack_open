@@ -4,14 +4,20 @@ function Header(props) {
   );
 }
 
+function Part(props) {
+  return (
+    <p>
+      {props.label} {props.value}
+    </p>
+  )
+}
+
 function Content(props) {
   return (
     <>
       {props.parts.map((part, idx) => {
         return (
-          <p key={idx}>
-            {part.label} {part.value}
-          </p>
+          <Part key={idx} label={part.label} value={part.value} />
         )
       })}
     </>
