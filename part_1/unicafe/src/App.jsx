@@ -1,16 +1,16 @@
 import { useState } from "react";
 
-function StatisticLine(props) {
+function StatisticLine({ text, value }) {
   return (
     <tr>
-      <td>{props.text}</td>
-      <td>{props.value}</td>
+      <td>{text}</td>
+      <td>{value}</td>
     </tr>
   );
 }
 
-function Statistics(props) {
-  const count = props.values.reduce((res, value) => {
+function Statistics({ values, grades }) {
+  const count = values.reduce((res, value) => {
     return res + value;
   });
 
@@ -20,12 +20,12 @@ function Statistics(props) {
       {count > 0 ? (
         <table>
           <tbody>
-            {props.grades.map((grade, idx) => (
-              <StatisticLine key={idx} text={grade} value={props.values[idx]} />
+            {grades.map((grade, idx) => (
+              <StatisticLine key={idx} text={grade} value={values[idx]} />
             ))}
             <StatisticLine text={"All"} value={count} />
-            <StatisticLine text={"Average"} value={(props.values[0] - props.values[2]) / count} />
-            <StatisticLine text={"Positive"} value={`${(props.values[0] / count) * 100}%`} />
+            <StatisticLine text={"Average"} value={(values[0] - values[2]) / count} />
+            <StatisticLine text={"Positive"} value={`${(values[0] / count) * 100}%`} />
           </tbody>
         </table>
       ) : (
@@ -35,12 +35,8 @@ function Statistics(props) {
   );
 }
 
-function Button(props) {
-  function handleClick() {
-    props.onClick(props.index);
-  }
-
-  return <button onClick={handleClick}>{props.text}</button>;
+function Button({ index, text, onClick }) {
+  return <button onClick={() => onClick(index)}>{text}</button>;
 }
 
 function App() {
