@@ -2,10 +2,14 @@ import { useState } from "react";
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: "Arto Hellas", phone: "123456789" },
+    { name: 'Arto Hellas', phone: '040-123456', id: 1 },
+    { name: 'Ada Lovelace', phone: '39-44-5323523', id: 2 },
+    { name: 'Dan Abramov', phone: '12-43-234345', id: 3 },
+    { name: 'Mary Poppendieck', phone: '39-23-6423122', id: 4 }
   ]);
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
+  const [searchValue, setSearchValue] = useState("");
 
   function handleOnNameChange(e) {
     setNewName(e.target.value);
@@ -26,6 +30,14 @@ const App = () => {
     } else {
       alert(`${newName} already exist in your contacts`);
     }
+  }
+
+  function handleOnSearchValueChange(e) {
+    setSearchValue(e.target.value);
+  }
+
+  function filterPersons(person) {
+    return person.name.toLowerCase().includes(searchValue);
   }
 
   return (
@@ -58,11 +70,15 @@ const App = () => {
           </button>
         </div>
       </form>
+      <br />
+      <div>
+        Search <input value={searchValue} onChange={handleOnSearchValueChange} />
+      </div>
       <h2>Numbers</h2>
       <table>
         <tbody>
-          {persons.map((person) => (
-            <tr key={person.name}>
+          {persons.filter(filterPersons).map((person) => (
+            <tr key={person.id}>
               <td>{person.name}</td>
               <td>{person.phone}</td>
             </tr>
