@@ -1,18 +1,28 @@
 import { useState } from "react";
 
 const App = () => {
-  const [persons, setPersons] = useState([{ name: "Arto Hellas" }]);
+  const [persons, setPersons] = useState([
+    { name: "Arto Hellas", phone: "123456789" },
+  ]);
   const [newName, setNewName] = useState("");
+  const [newPhone, setNewPhone] = useState("");
 
   function handleOnNameChange(e) {
     setNewName(e.target.value);
   }
 
+  function handleOnPhoneChange(e) {
+    setNewPhone(e.target.value);
+  }
+
   function handleOnAddClick(e) {
     e.preventDefault();
 
-    if (newName.length > 0 && !persons.find(person => person.name === newName)) {
-      setPersons(persons.concat({ name: newName }));
+    if (
+      newName.length > 0 &&
+      !persons.find((person) => person.name === newName)
+    ) {
+      setPersons(persons.concat({ name: newName, phone: newPhone }));
     } else {
       alert(`${newName} already exist in your contacts`);
     }
@@ -22,9 +32,22 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <form>
-        <div>
-          name: <input value={newName} onChange={handleOnNameChange} />
-        </div>
+        <table>
+          <tbody>
+            <tr>
+              <td>name</td>
+              <td>
+                <input value={newName} onChange={handleOnNameChange} />
+              </td>
+            </tr>
+            <tr>
+              <td>phone</td>
+              <td>
+                <input value={newPhone} onChange={handleOnPhoneChange} />
+              </td>
+            </tr>
+          </tbody>
+        </table>
         <div>
           <button
             disabled={newName.length === 0}
@@ -36,9 +59,16 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      {persons.map((person) => (
-        <p key={person.name}>{person.name}</p>
-      ))}
+      <table>
+        <tbody>
+          {persons.map((person) => (
+            <tr key={person.name}>
+              <td>{person.name}</td>
+              <td>{person.phone}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
