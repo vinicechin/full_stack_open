@@ -11,8 +11,10 @@ const App = () => {
   function handleOnAddClick(e) {
     e.preventDefault();
 
-    if (newName.length > 0) {
+    if (newName.length > 0 && !persons.find(person => person.name === newName)) {
       setPersons(persons.concat({ name: newName }));
+    } else {
+      alert(`${newName} already exist in your contacts`);
     }
   }
 
