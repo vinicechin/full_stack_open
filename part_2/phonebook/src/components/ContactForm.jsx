@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 export function ContactForm({ handleOnAddClick }) {
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");

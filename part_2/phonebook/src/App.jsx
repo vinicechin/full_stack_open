@@ -1,16 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from 'axios'
+
 import { ContactForm } from "./components/ContactForm";
 import { Search } from "./components/Search";
 import { PhonebookList } from "./components/PhonebookList";
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", phone: "040-123456", id: 1 },
-    { name: "Ada Lovelace", phone: "39-44-5323523", id: 2 },
-    { name: "Dan Abramov", phone: "12-43-234345", id: 3 },
-    { name: "Mary Poppendieck", phone: "39-23-6423122", id: 4 },
-  ]);
+  const [persons, setPersons] = useState([]);
   const [searchValue, setSearchValue] = useState("");
+  
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data);
+      });
+  }, []);
 
   function handleOnAddClick(newName, newPhone) {
     if (
@@ -37,8 +42,8 @@ const App = () => {
       <ContactForm handleOnAddClick={handleOnAddClick} />
       <br />
       <Search
-        searchValue={searchValue}
-        handleOnSearchValueChange={handleOnSearchValueChange}
+        value={searchValue}
+        onChange={handleOnSearchValueChange}
       />
       <h2>Numbers</h2>
       <PhonebookList persons={persons.filter(filterPersons)} />

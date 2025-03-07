@@ -1,7 +1,7 @@
-export function Search(searchValue, handleOnSearchValueChange) {
+export function Search({ value, onChange }) {
   return (
     <div>
-      Search <input value={searchValue} onChange={handleOnSearchValueChange} />
+      Search <input value={value} onChange={onChange} />
     </div>
   );
 }
