@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import ContactService from "./services/contacts";
 
 import { ContactForm } from "./components/ContactForm";
 import { Search } from "./components/Search";
@@ -12,8 +13,8 @@ const App = () => {
   const [newPhone, setNewPhone] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      setPersons(response.data);
+    ContactService.getAll().then((initContacts) => {
+      setPersons(initContacts);
     });
   }, []);
 
@@ -22,14 +23,13 @@ const App = () => {
       newName.length > 0 &&
       !persons.find((person) => person.name === newName)
     ) {
-      const newContact = { name: newName, phone: newPhone };
-      axios
-        .post("http://localhost:3001/persons", newContact)
-        .then((response) => {
-          setPersons(persons.concat(response.data));
-          setNewName('');
-          setNewPhone('');
-        });
+      ContactService.create({ name: newName, phone: newPhone }).then(
+        (newContact) => {
+          setPersons(persons.concat(newContact));
+          setNewName("");
+          setNewPhone("");
+        }
+      );
     } else {
       alert(`${newName} already exist in your contacts`);
     }
