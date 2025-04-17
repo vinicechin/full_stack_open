@@ -35,6 +35,12 @@ const App = () => {
     }
   }
 
+  function handleOnDeleteClick(id) {
+    ContactService.remove(id).then(() => {
+      setPersons(persons.filter(p => p.id !== id));
+    })
+  }
+
   function handleOnSearchValueChange(e) {
     e.preventDefault();
     setSearchValue(e.target.value);
@@ -57,7 +63,7 @@ const App = () => {
       <br />
       <Search value={searchValue} onChange={handleOnSearchValueChange} />
       <h2>Numbers</h2>
-      <PhonebookList persons={persons.filter(filterPersons)} />
+      <PhonebookList persons={persons.filter(filterPersons)} handleOnDeleteClick={handleOnDeleteClick} />
     </div>
   );
 };
