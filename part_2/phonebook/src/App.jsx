@@ -19,17 +19,31 @@ const App = () => {
   }, []);
 
   function handleOnAddClick(newName, newPhone) {
-    if (
-      newName.length > 0 &&
-      !persons.find((person) => person.name === newName)
-    ) {
-      ContactService.create({ name: newName, phone: newPhone }).then(
-        (newContact) => {
-          setPersons(persons.concat(newContact));
-          setNewName("");
-          setNewPhone("");
-        }
-      );
+    if (newName.length > 0) {
+      let update = false;
+
+      const oldPerson = persons.find((person) => person.name.toLowerCase() === newName.toLowerCase());
+      if (oldPerson != null) {
+        update = window.confirm(`Are you sure you want to update the contact for ${oldPerson.name}?`);
+      }
+
+      if (update) {
+        ContactService.update(oldPerson.id, { name: newName, phone: newPhone }).then(
+          (newContact) => {
+            setPersons(persons.map(p => p.id === oldPerson.id ? newContact : p));
+            setNewName("");
+            setNewPhone("");
+          }
+        );
+      } else {
+        ContactService.create({ name: newName, phone: newPhone }).then(
+          (newContact) => {
+            setPersons(persons.concat(newContact));
+            setNewName("");
+            setNewPhone("");
+          }
+        );
+      }
     } else {
       alert(`${newName} already exist in your contacts`);
     }
