@@ -1,14 +1,12 @@
-import { useState } from "react";
-
-export function ContactForm({ handleOnAddClick }) {
-  const [newName, setNewName] = useState("");
-  const [newPhone, setNewPhone] = useState("");
+export function ContactForm({ handleOnAddClick, newName, newPhone, setNewName, setNewPhone }) {
 
   function handleOnNameChange(e) {
+    e.preventDefault();
     setNewName(e.target.value);
   }
 
   function handleOnPhoneChange(e) {
+    e.preventDefault();
     setNewPhone(e.target.value);
   }
   
