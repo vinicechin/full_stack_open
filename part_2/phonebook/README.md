@@ -9,5 +9,5 @@ pnpm dev
 ## Run server:
 
 ```
-npx server --port 3001 db.json
+pnpm exec json-server --port 3001 db.json
 ```

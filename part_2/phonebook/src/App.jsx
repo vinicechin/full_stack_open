@@ -5,12 +5,17 @@ import ContactService from "./services/contacts";
 import { ContactForm } from "./components/ContactForm";
 import { Search } from "./components/Search";
 import { PhonebookList } from "./components/PhonebookList";
+import { Toast } from "./components/Toast";
+
+import '../index.css';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
+  const [toastMessage, setToastMessage] = useState(null);
+  const [toastClass, setToastClass] = useState("success");
 
   useEffect(() => {
     ContactService.getAll().then((initContacts) => {
@@ -31,6 +36,13 @@ const App = () => {
         ContactService.update(oldPerson.id, { name: newName, phone: newPhone }).then(
           (newContact) => {
             setPersons(persons.map(p => p.id === oldPerson.id ? newContact : p));
+            
+            setToastClass("success");
+            setToastMessage(`Updated ${newName} contact info.`);
+            setTimeout(() => {
+              setToastMessage(null)
+            }, 3000);
+
             setNewName("");
             setNewPhone("");
           }
@@ -39,6 +51,13 @@ const App = () => {
         ContactService.create({ name: newName, phone: newPhone }).then(
           (newContact) => {
             setPersons(persons.concat(newContact));
+            
+            setToastClass("success");
+            setToastMessage(`Added ${newName} to contacts.`);
+            setTimeout(() => {
+              setToastMessage(null)
+            }, 3000);
+
             setNewName("");
             setNewPhone("");
           }
@@ -76,6 +95,7 @@ const App = () => {
       />
       <br />
       <Search value={searchValue} onChange={handleOnSearchValueChange} />
+      <Toast message={toastMessage} toastClass={toastClass} />
       <h2>Numbers</h2>
       <PhonebookList persons={persons.filter(filterPersons)} handleOnDeleteClick={handleOnDeleteClick} />
     </div>
