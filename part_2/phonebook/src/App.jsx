@@ -18,10 +18,22 @@ const App = () => {
   const [toastClass, setToastClass] = useState("success");
 
   useEffect(() => {
+    handleFetchContacts();
+  }, []);
+
+  function handleFetchContacts() {
     ContactService.getAll().then((initContacts) => {
       setPersons(initContacts);
     });
-  }, []);
+  }
+
+  function handleToast(toastType, toastMessage) {
+    setToastClass(toastType);
+    setToastMessage(toastMessage);
+    setTimeout(() => {
+      setToastMessage(null)
+    }, 3000);
+  }
 
   function handleOnAddClick(newName, newPhone) {
     if (newName.length > 0) {
@@ -37,26 +49,21 @@ const App = () => {
           (newContact) => {
             setPersons(persons.map(p => p.id === oldPerson.id ? newContact : p));
             
-            setToastClass("success");
-            setToastMessage(`Updated ${newName} contact info.`);
-            setTimeout(() => {
-              setToastMessage(null)
-            }, 3000);
+            handleToast("success", `Updated ${newName} contact info.`);
 
             setNewName("");
             setNewPhone("");
           }
-        );
+        ).catch(() => {
+          handleToast("error", `Updating contact ${newName} resulted in error.`);
+          handleFetchContacts();
+        });
       } else {
         ContactService.create({ name: newName, phone: newPhone }).then(
           (newContact) => {
             setPersons(persons.concat(newContact));
             
-            setToastClass("success");
-            setToastMessage(`Added ${newName} to contacts.`);
-            setTimeout(() => {
-              setToastMessage(null)
-            }, 3000);
+            handleToast("success", `Added ${newName} to contacts.`);
 
             setNewName("");
             setNewPhone("");
