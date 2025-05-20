@@ -1,5 +1,5 @@
 export function CountriesList({ countries, handleOnShow }) {
-  function handleShowClick(e) {
+  function handleShowClick(e, country) {
     e.preventDefault();
     handleOnShow(country.name.official)
   }
@@ -9,7 +9,7 @@ export function CountriesList({ countries, handleOnShow }) {
         return (
           <li key={country.name.official} style={{ marginBottom: 5 }}>
             {country.name.official} ({country.name.common})
-            <button style={{ marginLeft: 5 }} onClick={handleShowClick}>
+            <button style={{ marginLeft: 5 }} onClick={(e) => handleShowClick(e, country)}>
               Show
             </button>
           </li>
