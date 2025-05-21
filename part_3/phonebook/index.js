@@ -51,7 +51,38 @@ app.delete('/api/persons/:id', (request, response) => {
   persons = persons.filter(person => person.id !== id);
 
   response.status(204).end();
-})
+});
+
+function generateId(max) {
+  const ids = persons.map(p => p.id);
+
+  let newId;
+  while (!newId || ids.includes(newId)) {
+    newId = String(Math.floor(Math.random() * max));
+  }
+
+  return String(newId);
+}
+
+app.post('/api/persons', (request, response) => {
+  const body = request.body
+
+  if (!body.name || !body.number) {
+    return response.status(400).json({ 
+      error: 'information missing' 
+    })
+  }
+
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: generateId(100000000),
+  }
+
+  persons = persons.concat(person);
+
+  response.json(person);
+});
 
 const PORT = 3001;
 app.listen(PORT, () => {
