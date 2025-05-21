@@ -67,10 +67,20 @@ function generateId(max) {
 app.post('/api/persons', (request, response) => {
   const body = request.body
 
-  if (!body.name || !body.number) {
+  if (!body.name) {
     return response.status(400).json({ 
-      error: 'information missing' 
-    })
+      error: 'name is missing' 
+    });
+  }
+  if (!body.number) {
+    return response.status(400).json({ 
+      error: 'number is missing' 
+    });
+  }
+  if (persons.map(p => p.name.toLowerCase()).includes(body.name.toLowerCase())) {
+    return response.status(400).json({ 
+      error: 'name must be unique'
+    });
   }
 
   const person = {
