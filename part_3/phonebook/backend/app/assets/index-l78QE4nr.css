@@ -1,0 +1,1 @@
+.toast{position:fixed;top:0;left:50%;transform:translate(-50%);z-index:9999;text-align:center;text-wrap:wrap;font-size:20px;min-width:200px;background:#d3d3d3;border-style:solid;border-radius:5px;padding:10px;margin:10px;animation:toast-move 2s ease-in}@keyframes toast-move{0%{top:-100px}25%{top:0}}.success{color:green}.error{color:red}
