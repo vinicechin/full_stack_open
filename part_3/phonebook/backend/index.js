@@ -12,29 +12,6 @@ morgan.token('body', req => {
   return JSON.stringify(req.body)
 })
 
-let persons = [
-    { 
-      "id": "1",
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": "2",
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": "3",
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": "4",
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-];
-
 app.get('/api/persons', (_, response) => {
   Person.find({}).then((persons) => {
     response.json(persons);
@@ -42,39 +19,27 @@ app.get('/api/persons', (_, response) => {
 });
 
 app.get('/api/info', (_, response) => {
-  const count = persons.length;
-  const timestamp = new Date();
-  response.end(`<p>Phonebook has info for ${count} people</p><p>${timestamp.toString()}</p>`);
+  Person.find({}).then((persons) => {
+    const count = persons.length;
+    const timestamp = new Date();
+    response.end(`<p>Phonebook has info for ${count} people</p><p>${timestamp.toString()}</p>`);
+  })
 });
 
 app.get('/api/persons/:id', (request, response) => {
-  const id = request.params.id;
-  const person = persons.find(person => person.id === id);
-
-  if (person) {
+  Person.findById(request.params.id).then(person => {
     response.json(person);
-  } else {
+  }).catch(() => {
     response.status(404).end();
-  }
+  });
 });
 
-app.delete('/api/persons/:id', (request, response) => {
-  const id = request.params.id;
-  persons = persons.filter(person => person.id !== id);
+// app.delete('/api/persons/:id', (request, response) => {
+//   const id = request.params.id;
+//   persons = persons.filter(person => person.id !== id);
 
-  response.status(204).end();
-});
-
-function generateId(max) {
-  const ids = persons.map(p => p.id);
-
-  let newId;
-  while (!newId || ids.includes(newId)) {
-    newId = String(Math.floor(Math.random() * max));
-  }
-
-  return String(newId);
-}
+//   response.status(204).end();
+// });
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
@@ -89,21 +54,20 @@ app.post('/api/persons', (request, response) => {
       error: 'number is missing' 
     });
   }
-  if (persons.map(p => p.name.toLowerCase()).includes(body.name.toLowerCase())) {
-    return response.status(400).json({ 
-      error: 'name must be unique'
-    });
-  }
+  // if (persons.map(p => p.name.toLowerCase()).includes(body.name.toLowerCase())) {
+  //   return response.status(400).json({ 
+  //     error: 'name must be unique'
+  //   });
+  // }
 
-  const person = {
+  const person = new Person({
     name: body.name,
     number: body.number,
-    id: generateId(100000000),
-  }
+  });
 
-  persons = persons.concat(person);
-
-  response.json(person);
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  });
 });
 
 const PORT = process.env.PORT || 3001;
