@@ -5,7 +5,7 @@ export function PhonebookList({ persons, handleOnDeleteClick }) {
         {persons.map((person) => (
           <tr key={person.id}>
             <td>{person.name}</td>
-            <td>{person.phone}</td>
+            <td>{person.number}</td>
             <td>
               <button onClick={() => {
                 const confirmed = window.confirm(`Are you sure you want to delete contact for ${person.name}?`);
