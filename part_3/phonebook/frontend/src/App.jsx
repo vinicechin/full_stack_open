@@ -53,8 +53,8 @@ const App = () => {
             setNewName("");
             setNewPhone("");
           }
-        ).catch(() => {
-          handleToast("error", `Updating contact ${newName} resulted in error.`);
+        ).catch((err) => {
+          handleToast("error", `${err.response.data.error}`);
           handleFetchContacts();
         });
       } else {
@@ -67,7 +67,10 @@ const App = () => {
             setNewName("");
             setNewPhone("");
           }
-        );
+        ).catch((err) => {
+          handleToast("error", `${err.response.data.error}`);
+          handleFetchContacts();
+        });
       }
     } else {
       alert(`${newName} already exist in your contacts`);
