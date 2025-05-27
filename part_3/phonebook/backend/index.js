@@ -59,6 +59,11 @@ app.put('/api/persons/:id', (request, response, next) => {
       person.name = name;
       person.number = number;
 
+      const numberFromatError = person.validateSync();
+      if (numberFromatError) {
+        return next(numberFromatError);
+      }
+
       return person.save()
         .then((updatedPerson) => {
           response.json(updatedPerson);
