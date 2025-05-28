@@ -19,14 +19,14 @@ const personSchema = new mongoose.Schema({
 });
 const Person = mongoose.model("Person", personSchema);
 
-if (process.argv.length == 5) {
+if (process.argv.length === 5) {
   // save contact
   const name = process.argv[3];
   const number = process.argv[4];
   const person = new Person({ name, number });
 
   person.save()
-    .finally(() => {      
+    .finally(() => {
       console.log(`Added ${name} number (${number}) to phonebook.`);
       mongoose.connection.close();
     });
@@ -34,7 +34,7 @@ if (process.argv.length == 5) {
   // retrieve list
   Person.find({})
     .then((result) => {
-      console.log("Phonebook:")
+      console.log("Phonebook:");
       result.forEach((person) => {
         console.log(`${person.name} ${person.number}`);
       });
