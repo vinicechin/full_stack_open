@@ -2,7 +2,7 @@ const { test, describe } = require("node:test");
 const assert = require("node:assert");
 const listHelper = require("../utils/list_helper");
 
-describe("most blogs", () => {
+describe("most likes", () => {
   const blogs = [
     {
       _id: "5a422aa71b54a676234d17f6",
@@ -39,20 +39,20 @@ describe("most blogs", () => {
   ];
 
   test("empty list, it is undefined", () => {
-    assert.strictEqual(listHelper.mostBlogs([]), undefined);
+    assert.strictEqual(listHelper.mostLikes([]), undefined);
   });
 
   test("1 element list, it is author of itself", () => {
-    assert.deepStrictEqual(listHelper.mostBlogs([blogs[0]]), {
+    assert.deepStrictEqual(listHelper.mostLikes([blogs[0]]), {
       author: blogs[0].author,
-      count: 1,
+      likes: 5,
     });
   });
 
-  test("More than 1 element list, it is the one that appears the most", () => {
-    assert.deepStrictEqual(listHelper.mostBlogs(blogs), {
+  test("More than 1 element list, it is the one with biggest sum of likes", () => {
+    assert.deepStrictEqual(listHelper.mostLikes(blogs), {
       author: blogs[0].author,
-      count: 2,
+      likes: 8,
     });
   });
 });
