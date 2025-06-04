@@ -7,11 +7,26 @@ const Blog = require("../models/blog");
 
 const api = supertest(app);
 
-describe("most likes", () => {
+describe("blog api", () => {
   const initialBlogs = [
-    { title: "Test 1", author: "Test User A", url: "http://test1.com", likes: 5 },
-    { title: "Test 2", author: "Test User A", url: "http://test2.com", likes: 10 },
-    { title: "Test 3", author: "Test User B", url: "http://test3.com", likes: 8 },
+    {
+      title: "Test 1",
+      author: "Test User A",
+      url: "http://test1.com",
+      likes: 5,
+    },
+    {
+      title: "Test 2",
+      author: "Test User A",
+      url: "http://test2.com",
+      likes: 10,
+    },
+    {
+      title: "Test 3",
+      author: "Test User B",
+      url: "http://test3.com",
+      likes: 8,
+    },
   ];
 
   beforeEach(async () => {
@@ -19,15 +34,11 @@ describe("most likes", () => {
     await Blog.insertMany(initialBlogs);
   });
 
-  test("blog list is returned as json", async () => {
-    await api
+  test("all blogs are returned", async () => {
+    const response = await api
       .get("/api/blogs")
       .expect(200)
       .expect("Content-Type", /application\/json/);
-  });
-
-  test("all blogs are returned", async () => {
-    const response = await api.get("/api/blogs");
 
     assert.strictEqual(response.body.length, initialBlogs.length);
 
