@@ -92,6 +92,26 @@ describe("blog api", () => {
     assert.deepStrictEqual(addedBlog.likes, 0);
   });
 
+  test("blog without title results in bad request", async () => {
+    const newBlog = {
+      author: "Added Test Author",
+      url: "http://add.test.com",
+      likes: 25,
+    };
+
+    await api.post("/api/blogs").send(newBlog).expect(400);
+  });
+
+  test("blog without url results in bad request", async () => {
+    const newBlog = {
+      title: "Added Test",
+      author: "Added Test Author",
+      likes: 25,
+    };
+
+    await api.post("/api/blogs").send(newBlog).expect(400);
+  });
+
   after(async () => {
     await mongoose.connection.close();
   });

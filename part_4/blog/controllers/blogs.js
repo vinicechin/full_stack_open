@@ -9,6 +9,14 @@ blogsRouter.get('/', async (_, response) => {
 blogsRouter.post('/', async (request, response) => {
   const body = request.body;
 
+  if (body.title == null) {
+    return response.status(400).end();
+  }
+
+  if (body.url == null) {
+    return response.status(400).end();
+  }
+
   const blog = new Blog({
     title: body.title,
     author: body.author,
