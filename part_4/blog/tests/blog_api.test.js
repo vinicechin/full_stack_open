@@ -64,12 +64,7 @@ describe("blog api", () => {
       likes: 25,
     };
 
-    await api.post("/api/blogs").send({
-      title: "Added Test",
-      author: "Added Test Author",
-      url: "http://add.test.com",
-      likes: 25,
-    }).expect(201).expect("Content-Type", /application\/json/);
+    await api.post("/api/blogs").send(newBlog).expect(201).expect("Content-Type", /application\/json/);
 
     const response = await api.get("/api/blogs");
     assert.strictEqual(response.body.length, initialBlogs.length + 1);
@@ -79,6 +74,22 @@ describe("blog api", () => {
     assert.deepStrictEqual(addedBlog.author, newBlog.author);
     assert.deepStrictEqual(addedBlog.url, newBlog.url);
     assert.deepStrictEqual(addedBlog.likes, newBlog.likes);
+  });
+
+  test("blog without likes is initialized with zero", async () => {
+    const newBlog = {
+      title: "Added Test",
+      author: "Added Test Author",
+      url: "http://add.test.com",
+    };
+
+    await api.post("/api/blogs").send(newBlog).expect(201).expect("Content-Type", /application\/json/);
+
+    const response = await api.get("/api/blogs");
+    assert.strictEqual(response.body.length, initialBlogs.length + 1);
+
+    const addedBlog = response.body.find(blog => blog.title === newBlog.title);
+    assert.deepStrictEqual(addedBlog.likes, 0);
   });
 
   after(async () => {
