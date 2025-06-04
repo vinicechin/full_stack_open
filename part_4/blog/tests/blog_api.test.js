@@ -48,6 +48,39 @@ describe("blog api", () => {
     assert.strictEqual(titles.includes("Test 3"), true);
   });
 
+
+  test("all blogs have an id field", async () => {
+    const response = await api.get("/api/blogs");
+
+    const ids = response.body.map((e) => e.id);
+    assert.strictEqual(ids.includes(undefined), false);
+  });
+
+  test("new blog can be added", async () => {
+    const newBlog = {
+      title: "Added Test",
+      author: "Added Test Author",
+      url: "http://add.test.com",
+      likes: 25,
+    };
+
+    await api.post("/api/blogs").send({
+      title: "Added Test",
+      author: "Added Test Author",
+      url: "http://add.test.com",
+      likes: 25,
+    }).expect(201).expect("Content-Type", /application\/json/);
+
+    const response = await api.get("/api/blogs");
+    assert.strictEqual(response.body.length, initialBlogs.length + 1);
+
+    const addedBlog = response.body.find(blog => blog.title === newBlog.title);
+    assert.deepStrictEqual(addedBlog.title, newBlog.title);
+    assert.deepStrictEqual(addedBlog.author, newBlog.author);
+    assert.deepStrictEqual(addedBlog.url, newBlog.url);
+    assert.deepStrictEqual(addedBlog.likes, newBlog.likes);
+  });
+
   after(async () => {
     await mongoose.connection.close();
   });
