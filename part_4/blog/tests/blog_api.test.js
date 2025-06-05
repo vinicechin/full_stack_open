@@ -135,6 +135,68 @@ describe("blog api", () => {
     });
   });
 
+  describe("edit blog", () => {
+    test("can edit blog title", async () => {
+      let response = await api.get("/api/blogs");
+      const blog = response.body[0];
+
+      await api.put(`/api/blogs/${blog.id}`).send({
+        title: "New Title",
+        author: blog.author,
+        url: blog.url,
+        likes: blog.likes,
+      }).expect(200);
+
+      response = await api.get("/api/blogs");
+      assert.strictEqual(response.body.find((blog) => blog.title === "New Title")?.id, blog.id);
+    });
+
+    test("can edit blog url", async () => {
+      let response = await api.get("/api/blogs");
+      const blog = response.body[0];
+
+      await api.put(`/api/blogs/${blog.id}`).send({
+        title: blog.title,
+        author: blog.author,
+        url: "http://changed-url.com",
+        likes: blog.likes,
+      }).expect(200);
+
+      response = await api.get("/api/blogs");
+      assert.strictEqual(response.body.find((blog) => blog.url === "http://changed-url.com")?.id, blog.id);
+    });
+
+    test("can edit blog author", async () => {
+      let response = await api.get("/api/blogs");
+      const blog = response.body[0];
+
+      await api.put(`/api/blogs/${blog.id}`).send({
+        title: blog.title,
+        author: "New Author",
+        url: blog.url,
+        likes: blog.likes,
+      }).expect(200);
+
+      response = await api.get("/api/blogs");
+      assert.strictEqual(response.body.find((blog) => blog.author === "New Author")?.id, blog.id);
+    });
+
+    test("can edit blog author", async () => {
+      let response = await api.get("/api/blogs");
+      const blog = response.body[0];
+
+      await api.put(`/api/blogs/${blog.id}`).send({
+        title: blog.title,
+        author: blog.author,
+        url: blog.url,
+        likes: 100,
+      }).expect(200);
+
+      response = await api.get("/api/blogs");
+      assert.strictEqual(response.body.find((blog) => blog.likes === 100)?.id, blog.id);
+    });
+  });
+
   after(async () => {
     await mongoose.connection.close();
   });
