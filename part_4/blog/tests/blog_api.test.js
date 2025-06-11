@@ -3,35 +3,15 @@ const assert = require("node:assert");
 const mongoose = require("mongoose");
 const supertest = require("supertest");
 const app = require("../app");
+const helper = require('./test_helper');
 const Blog = require("../models/blog");
 
 const api = supertest(app);
 
 describe("blog api", () => {
-  const initialBlogs = [
-    {
-      title: "Test 1",
-      author: "Test User A",
-      url: "http://test1.com",
-      likes: 5,
-    },
-    {
-      title: "Test 2",
-      author: "Test User A",
-      url: "http://test2.com",
-      likes: 10,
-    },
-    {
-      title: "Test 3",
-      author: "Test User B",
-      url: "http://test3.com",
-      likes: 8,
-    },
-  ];
-
   beforeEach(async () => {
     await Blog.deleteMany({});
-    await Blog.insertMany(initialBlogs);
+    await Blog.insertMany(helper.initialBlogs);
   });
 
   describe("blogs access and validity", () => {
@@ -41,7 +21,7 @@ describe("blog api", () => {
         .expect(200)
         .expect("Content-Type", /application\/json/);
 
-      assert.strictEqual(response.body.length, initialBlogs.length);
+      assert.strictEqual(response.body.length, helper.initialBlogs.length);
 
       const titles = response.body.map((e) => e.title);
       assert.strictEqual(titles.includes("Test 1"), true);
@@ -69,7 +49,7 @@ describe("blog api", () => {
       await api.post("/api/blogs").send(newBlog).expect(201).expect("Content-Type", /application\/json/);
 
       const response = await api.get("/api/blogs");
-      assert.strictEqual(response.body.length, initialBlogs.length + 1);
+      assert.strictEqual(response.body.length, helper.initialBlogs.length + 1);
 
       const addedBlog = response.body.find(blog => blog.title === newBlog.title);
       assert.deepStrictEqual(addedBlog.title, newBlog.title);
@@ -88,7 +68,7 @@ describe("blog api", () => {
       await api.post("/api/blogs").send(newBlog).expect(201).expect("Content-Type", /application\/json/);
 
       const response = await api.get("/api/blogs");
-      assert.strictEqual(response.body.length, initialBlogs.length + 1);
+      assert.strictEqual(response.body.length, helper.initialBlogs.length + 1);
 
       const addedBlog = response.body.find(blog => blog.title === newBlog.title);
       assert.deepStrictEqual(addedBlog.likes, 0);
