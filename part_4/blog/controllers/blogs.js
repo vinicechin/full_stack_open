@@ -1,5 +1,6 @@
 const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
+const User = require('../models/user');
 
 blogsRouter.get('/', async (_, response) => {
   const blogs = await Blog.find({});
@@ -8,6 +9,11 @@ blogsRouter.get('/', async (_, response) => {
 
 blogsRouter.post('/', async (request, response) => {
   const body = request.body;
+
+  const user = await User.findById(body.userId);
+  if (!user) {
+    return response.status(400).json({ error: 'userId missing or not valid' });
+  }
 
   if (body.title == null) {
     return response.status(400).end();

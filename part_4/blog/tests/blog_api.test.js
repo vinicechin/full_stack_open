@@ -2,9 +2,11 @@ const { test, after, beforeEach, describe } = require("node:test");
 const assert = require("node:assert");
 const mongoose = require("mongoose");
 const supertest = require("supertest");
+const bcrypt = require("bcrypt");
 const app = require("../app");
 const helper = require('./test_helper');
 const Blog = require("../models/blog");
+const User = require("../models/user");
 
 const api = supertest(app);
 
@@ -12,6 +14,11 @@ describe("blog api", () => {
   beforeEach(async () => {
     await Blog.deleteMany({});
     await Blog.insertMany(helper.initialBlogs);
+
+    await User.deleteMany({});
+    const passwordHash = await bcrypt.hash("secret", 10);
+    const user = new User({ username: "root", passwordHash });
+    await user.save();
   });
 
   describe("blogs access and validity", () => {
@@ -39,11 +46,14 @@ describe("blog api", () => {
 
   describe("add new blog", () => {
     test("new blog can be added", async () => {
+      const users = await helper.usersInDb();
+
       const newBlog = {
         title: "Added Test",
         author: "Added Test Author",
         url: "http://add.test.com",
         likes: 25,
+        userId: users[0].id,
       };
 
       await api.post("/api/blogs").send(newBlog).expect(201).expect("Content-Type", /application\/json/);
@@ -59,10 +69,13 @@ describe("blog api", () => {
     });
 
     test("blog without likes is initialized with zero", async () => {
+      const users = await helper.usersInDb();
+
       const newBlog = {
         title: "Added Test",
         author: "Added Test Author",
         url: "http://add.test.com",
+        userId: users[0].id,
       };
 
       await api.post("/api/blogs").send(newBlog).expect(201).expect("Content-Type", /application\/json/);

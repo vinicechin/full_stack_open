@@ -41,6 +41,67 @@ describe("user api", () => {
       const usernames = usersAtEnd.map((u) => u.username);
       assert(usernames.includes(newUser.username));
     });
+
+    test("creation fails with same username", async () => {
+      const usersAtStart = await helper.usersInDb();
+
+      const newUser = {
+        username: "root",
+        name: "Same Username",
+        password: "test123",
+      };
+
+      await api.post("/api/users").send(newUser).expect(400);
+
+      const usersAtEnd = await helper.usersInDb();
+      assert.strictEqual(usersAtEnd.length, usersAtStart.length);
+    });
+  });
+
+  describe("invalid form fields", () => {
+    test("creation fails with invalid username", async () => {
+      const usersAtStart = await helper.usersInDb();
+
+      const newUser = {
+        username: "vi",
+        name: "Vinicius Cechin",
+        password: "test123",
+      };
+
+      await api.post("/api/users").send(newUser).expect(400);
+
+      const usersAtEnd = await helper.usersInDb();
+      assert.strictEqual(usersAtEnd.length, usersAtStart.length);
+    });
+
+    test("creation fails with invalid password", async () => {
+      const usersAtStart = await helper.usersInDb();
+
+      const newUser = {
+        username: "vinicius",
+        name: "Vinicius Cechin",
+        password: "te",
+      };
+
+      await api.post("/api/users").send(newUser).expect(400);
+
+      const usersAtEnd = await helper.usersInDb();
+      assert.strictEqual(usersAtEnd.length, usersAtStart.length);
+    });
+
+    test("creation fails with missing password", async () => {
+      const usersAtStart = await helper.usersInDb();
+
+      const newUser = {
+        username: "vinicius",
+        name: "Vinicius Cechin",
+      };
+
+      await api.post("/api/users").send(newUser).expect(400);
+
+      const usersAtEnd = await helper.usersInDb();
+      assert.strictEqual(usersAtEnd.length, usersAtStart.length);
+    });
   });
 
   after(async () => {
