@@ -10,6 +10,8 @@ const User = require("../models/user");
 
 const api = supertest(app);
 
+let token = "";
+
 describe("blog api", () => {
   beforeEach(async () => {
     await Blog.deleteMany({});
@@ -19,6 +21,14 @@ describe("blog api", () => {
     const passwordHash = await bcrypt.hash("secret", 10);
     const user = new User({ username: "root", passwordHash });
     await user.save();
+
+    const loginInfo = {
+      username: user.username,
+      password: "secret",
+    };
+
+    const response = await api.post("/api/login").send(loginInfo);
+    token = response.body.token;
   });
 
   describe("blogs access and validity", () => {
@@ -56,7 +66,12 @@ describe("blog api", () => {
         userId: users[0].id,
       };
 
-      await api.post("/api/blogs").send(newBlog).expect(201).expect("Content-Type", /application\/json/);
+      await api
+        .post("/api/blogs")
+        .set({ "authorization": "Bearer " + token })
+        .send(newBlog)
+        .expect(201)
+        .expect("Content-Type", /application\/json/);
 
       const response = await api.get("/api/blogs");
       assert.strictEqual(response.body.length, helper.initialBlogs.length + 1);
@@ -78,7 +93,12 @@ describe("blog api", () => {
         userId: users[0].id,
       };
 
-      await api.post("/api/blogs").send(newBlog).expect(201).expect("Content-Type", /application\/json/);
+      await api
+        .post("/api/blogs")
+        .set({ "authorization": "Bearer " + token })
+        .send(newBlog)
+        .expect(201)
+        .expect("Content-Type", /application\/json/);
 
       const response = await api.get("/api/blogs");
       assert.strictEqual(response.body.length, helper.initialBlogs.length + 1);
@@ -94,7 +114,7 @@ describe("blog api", () => {
         likes: 25,
       };
 
-      await api.post("/api/blogs").send(newBlog).expect(400);
+      await api.post("/api/blogs").set({ "authorization": "Bearer " + token }).send(newBlog).expect(400);
     });
 
     test("blog without url results in bad request", async () => {
@@ -104,7 +124,7 @@ describe("blog api", () => {
         likes: 25,
       };
 
-      await api.post("/api/blogs").send(newBlog).expect(400);
+      await api.post("/api/blogs").set({ "authorization": "Bearer " + token }).send(newBlog).expect(400);
     });
   });
 
