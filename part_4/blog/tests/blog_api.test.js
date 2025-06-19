@@ -85,6 +85,23 @@ describe("blog api", () => {
       assert.deepStrictEqual(addedBlog.likes, newBlog.likes);
     });
 
+    test("new blog without auth token can't be added", async () => {
+      const users = await helper.usersInDb();
+
+      const newBlog = {
+        title: "Added Test",
+        author: "Added Test Author",
+        url: "http://add.test.com",
+        likes: 25,
+        userId: users[0].id,
+      };
+
+      await api.post("/api/blogs").send(newBlog).expect(400);
+
+      const response = await api.get("/api/blogs");
+      assert.strictEqual(response.body.length, initialBlogs.length);
+    });
+
     test("blog without likes is initialized with zero", async () => {
       const users = await helper.usersInDb();
 
