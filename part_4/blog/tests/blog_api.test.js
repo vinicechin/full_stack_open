@@ -11,16 +11,18 @@ const User = require("../models/user");
 const api = supertest(app);
 
 let token = "";
+let initialBlogs = [];
 
 describe("blog api", () => {
   beforeEach(async () => {
-    await Blog.deleteMany({});
-    await Blog.insertMany(helper.initialBlogs);
-
     await User.deleteMany({});
     const passwordHash = await bcrypt.hash("secret", 10);
     const user = new User({ username: "root", passwordHash });
     await user.save();
+
+    initialBlogs = helper.initialBlogs(user._id);
+    await Blog.deleteMany({});
+    await Blog.insertMany(initialBlogs);
 
     const loginInfo = {
       username: user.username,
@@ -38,7 +40,7 @@ describe("blog api", () => {
         .expect(200)
         .expect("Content-Type", /application\/json/);
 
-      assert.strictEqual(response.body.length, helper.initialBlogs.length);
+      assert.strictEqual(response.body.length, initialBlogs.length);
 
       const titles = response.body.map((e) => e.title);
       assert.strictEqual(titles.includes("Test 1"), true);
@@ -74,7 +76,7 @@ describe("blog api", () => {
         .expect("Content-Type", /application\/json/);
 
       const response = await api.get("/api/blogs");
-      assert.strictEqual(response.body.length, helper.initialBlogs.length + 1);
+      assert.strictEqual(response.body.length, initialBlogs.length + 1);
 
       const addedBlog = response.body.find(blog => blog.title === newBlog.title);
       assert.deepStrictEqual(addedBlog.title, newBlog.title);
@@ -101,7 +103,7 @@ describe("blog api", () => {
         .expect("Content-Type", /application\/json/);
 
       const response = await api.get("/api/blogs");
-      assert.strictEqual(response.body.length, helper.initialBlogs.length + 1);
+      assert.strictEqual(response.body.length, initialBlogs.length + 1);
 
       const addedBlog = response.body.find(blog => blog.title === newBlog.title);
       assert.deepStrictEqual(addedBlog.likes, 0);
@@ -133,18 +135,18 @@ describe("blog api", () => {
       const response = await api.get("/api/blogs");
       const blog = response.body[0];
 
-      await api.delete(`/api/blogs/${blog.id}`).expect(204);
+      await api.delete(`/api/blogs/${blog.id}`).set({ "authorization": "Bearer " + token }).expect(204);
     });
 
     test("last blog can be deleted", async () => {
       const response = await api.get("/api/blogs");
       const blog = response.body[response.body.length-1];
 
-      await api.delete(`/api/blogs/${blog.id}`).expect(204);
+      await api.delete(`/api/blogs/${blog.id}`).set({ "authorization": "Bearer " + token }).expect(204);
     });
 
     test("inexistent blog deletion is invalid", async () => {
-      await api.delete("/api/blogs/invalidid").expect(400);
+      await api.delete("/api/blogs/invalidid").set({ "authorization": "Bearer " + token }).expect(400);
     });
   });
 
