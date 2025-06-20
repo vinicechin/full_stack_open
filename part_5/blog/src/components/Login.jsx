@@ -1,0 +1,53 @@
+import { useState } from "react";
+import loginService from "../services/login";
+import { Toast } from "./Toast";
+
+const Login = ({ onUserResponse }) => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [toastMessage, setToastMessage] = useState(null);
+  const [toastClass, setToastClass] = useState("success");
+
+  function handleToast(toastType, toastMessage) {
+    setToastClass(toastType);
+    setToastMessage(toastMessage);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 3000);
+  }
+
+  async function onLoginClick() {
+    try {
+      const userData = await loginService.login({ username, password });
+      onUserResponse && onUserResponse(userData);
+    } catch(err) {
+      handleToast("error", err.message);
+    }
+  }
+
+  function onUsernameChange(e) {
+    setUsername(e.target.value);
+  }
+
+  function onPasswordChange(e) {
+    setPassword(e.target.value);
+  }
+
+  return (
+    <div>
+      <h2>Login</h2>
+      <div>
+        <span style={{ marginRight: 5 }}>username</span>
+        <input type="text" onChange={onUsernameChange} />
+      </div>
+      <div>
+        <span style={{ marginRight: 5 }}>password</span>
+        <input type="password" onChange={onPasswordChange} />
+      </div>
+      <button onClick={onLoginClick} >Login</button>
+      <Toast message={toastMessage} toastClass={toastClass} />
+    </div>
+  );
+};
+
+export default Login;
