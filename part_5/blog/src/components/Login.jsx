@@ -16,11 +16,13 @@ const Login = ({ onUserResponse }) => {
     }, 3000);
   }
 
-  async function onLoginClick() {
+  async function onLoginClick(e) {
+    e.preventDefault();
     try {
       const userData = await loginService.login({ username, password });
       onUserResponse && onUserResponse(userData);
-    } catch(err) {
+      handleToast("success", "logged in");
+    } catch (err) {
       handleToast("error", err.message);
     }
   }
@@ -36,15 +38,17 @@ const Login = ({ onUserResponse }) => {
   return (
     <div>
       <h2>Login</h2>
-      <div>
-        <span style={{ marginRight: 5 }}>username</span>
-        <input type="text" onChange={onUsernameChange} />
-      </div>
-      <div>
-        <span style={{ marginRight: 5 }}>password</span>
-        <input type="password" onChange={onPasswordChange} />
-      </div>
-      <button onClick={onLoginClick} >Login</button>
+      <form onSubmit={onLoginClick}>
+        <div>
+          <span style={{ marginRight: 5 }}>username</span>
+          <input type="text" onChange={onUsernameChange} value={username} />
+        </div>
+        <div>
+          <span style={{ marginRight: 5 }}>password</span>
+          <input type="password" onChange={onPasswordChange} value={password} />
+        </div>
+        <button type="submit" style={{ marginTop: 5 }}>Login</button>
+      </form>
       <Toast message={toastMessage} toastClass={toastClass} />
     </div>
   );

@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import Blogs from "./components/Blogs";
 import blogService from "./services/blogs";
 import Login from "./components/Login";
+import Blogs from "./components/Blogs";
+import BlogForm from "./components/BlogForm";
 
-import '../index.css';
+import "../index.css";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -18,7 +19,7 @@ const App = () => {
 
   useEffect(() => {
     if (user) {
-      blogService.getAll().then((blogs) => setBlogs(blogs));
+      fetchBlogs();
     }
   }, [user]);
 
@@ -27,17 +28,26 @@ const App = () => {
     localStorage.setItem("user", JSON.stringify(user));
   }
 
-  function onLogoutClick() {
+  function onLogoutClick(e) {
+    e.preventDefault();
     localStorage.removeItem("user");
     setUser(undefined);
+  }
+
+  async function fetchBlogs() {
+    const newBlogs = await blogService.getAll();
+    setBlogs(newBlogs);
   }
 
   return (
     <>
       {user ? (
         <Blogs blogs={blogs}>
-          <>User {user.name} is logged in</>
-          <button onClick={onLogoutClick} >logout</button>
+          <div>
+            <>User {user.name} is logged in.</>
+            <button onClick={onLogoutClick}>logout</button>
+          </div>
+          <BlogForm token={user.token} onCreated={fetchBlogs} />
         </Blogs>
       ) : (
         <Login onUserResponse={onUserResponse} />
