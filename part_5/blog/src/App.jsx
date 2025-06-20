@@ -1,14 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import blogService from "./services/blogs";
 import Login from "./components/Login";
 import Blogs from "./components/Blogs";
 import BlogForm from "./components/BlogForm";
 
 import "../index.css";
+import Togglable from "./components/Togglable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState();
+  const blogFormTogglableRef = useRef();
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
@@ -39,6 +41,11 @@ const App = () => {
     setBlogs(newBlogs);
   }
 
+  function onBlogCreated() {
+    blogFormTogglableRef.current.toggleContent();
+    fetchBlogs();
+  }
+
   return (
     <>
       {user ? (
@@ -47,7 +54,13 @@ const App = () => {
             <>User {user.name} is logged in.</>
             <button onClick={onLogoutClick}>logout</button>
           </div>
-          <BlogForm token={user.token} onCreated={fetchBlogs} />
+          <div style={{ margin: '15px 0 5px' }}>
+            <Togglable label="add note" ref={blogFormTogglableRef}>
+              <div style={{ border: '1px solid grey', borderRadius: 4, padding: 4, maxWidth: '300px' }}>
+                <BlogForm token={user.token} onCreated={onBlogCreated} />
+              </div>
+            </Togglable>
+          </div>
         </Blogs>
       ) : (
         <Login onUserResponse={onUserResponse} />

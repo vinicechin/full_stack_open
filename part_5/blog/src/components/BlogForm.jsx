@@ -46,7 +46,7 @@ const Login = ({ onCreated, token }) => {
 
   return (
     <div>
-      <h2>Login</h2>
+      <h2 style={{ margin: '5px 0' }}>Create a blog</h2>
       <form onSubmit={onCreateClick}>
         <div>
           <span style={{ marginRight: 5 }}>Title</span>
