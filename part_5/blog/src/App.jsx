@@ -10,6 +10,13 @@ const App = () => {
   const [user, setUser] = useState();
 
   useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    if (savedUser != null) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
+  useEffect(() => {
     if (user) {
       blogService.getAll().then((blogs) => setBlogs(blogs));
     }
@@ -17,6 +24,12 @@ const App = () => {
 
   function onUserResponse(user) {
     setUser(user);
+    localStorage.setItem("user", JSON.stringify(user));
+  }
+
+  function onLogoutClick() {
+    localStorage.removeItem("user");
+    setUser(undefined);
   }
 
   return (
@@ -24,6 +37,7 @@ const App = () => {
       {user ? (
         <Blogs blogs={blogs}>
           <>User {user.name} is logged in</>
+          <button onClick={onLogoutClick} >logout</button>
         </Blogs>
       ) : (
         <Login onUserResponse={onUserResponse} />
