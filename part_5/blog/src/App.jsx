@@ -55,7 +55,7 @@ const App = () => {
             <button onClick={onLogoutClick}>logout</button>
           </div>
           <div style={{ margin: '15px 0 5px' }}>
-            <Togglable label="add note" ref={blogFormTogglableRef}>
+            <Togglable label="add blog" ref={blogFormTogglableRef}>
               <div style={{ border: '1px solid grey', borderRadius: 4, padding: 4, maxWidth: '300px' }}>
                 <BlogForm token={user.token} onCreated={onBlogCreated} />
               </div>

@@ -14,10 +14,12 @@ const Togglable = forwardRef(({ children, label }, refs) => {
   }
 
   return (
-    <div>
+    <>
       <button onClick={toggleContent}>{isOpen ? "cancel" : label}</button>
-      {isOpen && children}
-    </div>
+      <div>
+        {isOpen && children}
+      </div>
+    </>
   );
 });
 
