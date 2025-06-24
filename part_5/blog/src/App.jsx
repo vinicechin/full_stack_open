@@ -46,10 +46,14 @@ const App = () => {
     fetchBlogs();
   }
 
+  function onBlogUpdated() {
+    fetchBlogs();
+  }
+
   return (
     <>
       {user ? (
-        <Blogs blogs={blogs}>
+        <Blogs blogs={blogs} onUpdated={onBlogUpdated}>
           <div>
             <>User {user.name} is logged in.</>
             <button onClick={onLogoutClick}>logout</button>
