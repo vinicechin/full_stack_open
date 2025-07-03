@@ -38,7 +38,7 @@ const App = () => {
 
   async function fetchBlogs() {
     const newBlogs = await blogService.getAll();
-    setBlogs(newBlogs);
+    setBlogs(newBlogs.sort((blog1, blog2) => blog1.likes - blog2.likes));
   }
 
   function onBlogCreated() {
