@@ -53,7 +53,7 @@ const App = () => {
   return (
     <>
       {user ? (
-        <Blogs blogs={blogs} onUpdated={onBlogUpdated}>
+        <Blogs blogs={blogs} onUpdated={onBlogUpdated} user={user}>
           <div>
             <>User {user.name} is logged in.</>
             <button onClick={onLogoutClick}>logout</button>

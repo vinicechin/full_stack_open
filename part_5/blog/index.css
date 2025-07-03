@@ -19,6 +19,10 @@
   animation: toast-move 2s ease-in;
 }
 
+button:hover {
+  cursor: pointer;
+}
+
 @keyframes toast-move {
   0% {
     top: -100px;
