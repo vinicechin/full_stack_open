@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 import loginService from "../services/login";
 import { Toast } from "./Toast";
 
@@ -54,4 +55,7 @@ const Login = ({ onUserResponse }) => {
   );
 };
 
+Login.propTypes = {
+  onUserResponse: PropTypes.func.isRequired,
+};
 export default Login;
