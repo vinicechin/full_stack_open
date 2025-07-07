@@ -2,6 +2,14 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Blog from "../src/components/Blog/Blog";
 import { beforeEach } from "vitest";
+import { vi } from "vitest";
+import blogService from "../src/services/blogs";
+
+vi.mock('../src/services/blogs', () => ({
+  default: {
+    update: vi.fn(),
+  }
+}));
 
 let blogData = {};
 let userData = {};
@@ -22,7 +30,7 @@ beforeEach(() => {
   };
 });
 
-test("render title but not content", async () => {
+test("render title but not content", () => {
   render(<Blog blog={blogData} user={userData} />);
 
   screen.getByText("Test blog");
@@ -35,7 +43,7 @@ test("render title but not content", async () => {
 });
 
 
-test("render title but not content", async () => {
+test("render url, author and likes", async () => {
   render(<Blog blog={blogData} user={userData} />);
 
   const user = userEvent.setup();
@@ -45,4 +53,21 @@ test("render title but not content", async () => {
   screen.getByText("test.blog.com");
   screen.getByText("Test author");
   screen.getByText("likes: ", { exact: false });
+});
+
+test("clicking add like only calls handler once", async () => {
+  const onUpdated = vi.fn();
+  blogService.update.mockResolvedValue({});
+
+  render(<Blog blog={blogData} user={userData} onUpdated={onUpdated} />);
+
+  const user = userEvent.setup();
+  const viewBtn = screen.getByText("view");
+  await user.click(viewBtn);
+
+  const addBtn = screen.getByText("add");
+  await user.click(addBtn);
+  await user.click(addBtn);
+
+  expect(onUpdated.mock.calls).toHaveLength(2);
 });
