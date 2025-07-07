@@ -2,7 +2,7 @@ import { useState } from "react";
 import blogService from "../services/blogs";
 import { Toast } from "./Toast";
 
-const Login = ({ onCreated, token }) => {
+const BlogForm = ({ onCreated, token }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
@@ -50,15 +50,15 @@ const Login = ({ onCreated, token }) => {
       <form onSubmit={onCreateClick}>
         <div>
           <span style={{ marginRight: 5 }}>Title</span>
-          <input type="text" onChange={onTitleChange} value={title} />
+          <input placeholder="Write title here" type="text" onChange={onTitleChange} value={title} />
         </div>
         <div>
           <span style={{ marginRight: 5 }}>Author</span>
-          <input type="text" onChange={onAuthorChange} value={author} />
+          <input placeholder="Write author here" type="text" onChange={onAuthorChange} value={author} />
         </div>
         <div>
           <span style={{ marginRight: 5 }}>Url</span>
-          <input type="text" onChange={onUrlChange} value={url} />
+          <input placeholder="Write url here" type="text" onChange={onUrlChange} value={url} />
         </div>
         <button type="submit" style={{ marginTop: 5 }}>Create</button>
       </form>
@@ -67,4 +67,4 @@ const Login = ({ onCreated, token }) => {
   );
 };
 
-export default Login;
+export default BlogForm;
