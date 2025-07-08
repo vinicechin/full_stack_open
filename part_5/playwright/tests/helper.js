@@ -15,4 +15,12 @@ const createBlog = async (page, title, author, url) => {
   await page.getByText(title).waitFor();
 };
 
-export { loginWith, createBlog };
+const addBlogLike = async (page, title, currentAmount) => {
+  const blogDiv = await page.getByText(title).locator("..");
+  await blogDiv.getByRole("button", { name: "view" }).click();
+  await page.getByText(`likes: ${currentAmount}`).waitFor();
+  await blogDiv.getByRole("button", { name: "add" }).click();
+  await page.getByText(`likes: ${currentAmount + 1}`).waitFor();
+}
+
+export { loginWith, createBlog, addBlogLike };

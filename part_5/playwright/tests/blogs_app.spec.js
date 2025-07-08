@@ -1,5 +1,5 @@
 const { test, expect, describe, beforeEach } = require("@playwright/test");
-const { loginWith, createBlog } = require("./helper");
+const { loginWith, createBlog, addBlogLike } = require("./helper");
 
 describe("blog app", () => {
   beforeEach(async ({ page, request }) => {
@@ -84,7 +84,7 @@ describe("blog app", () => {
       test("a blog can be deleted", async ({ page }) => {
         const blogDiv = await page.getByText("New Blog 1").locator("..");
         await blogDiv.getByRole("button", { name: "view" }).click();
-        page.on('dialog', dialog => dialog.accept());
+        page.on("dialog", (dialog) => dialog.accept());
         await blogDiv.getByRole("button", { name: "delete" }).click();
 
         await expect(page.getByText("New Blog 1")).not.toBeVisible();
@@ -97,8 +97,20 @@ describe("blog app", () => {
 
         const blogDiv = await page.getByText("New Blog 1").locator("..");
         await blogDiv.getByRole("button", { name: "view" }).click();
-        
-        await expect(blogDiv.getByRole("button", { name: "delete" })).not.toBeVisible();
+
+        await expect(
+          blogDiv.getByRole("button", { name: "delete" })
+        ).not.toBeVisible();
+      });
+
+      test.only("blogs are displayed in the right order", async ({ page }) => {
+        let blogTitles = await page.locator(".title").allTextContents();
+        expect(blogTitles).toEqual(["New Blog 1", "New Blog 2"]);
+
+        await addBlogLike(page, "New Blog 1", 0);
+
+        blogTitles = await page.locator(".title").allTextContents();
+        expect(blogTitles).toEqual(["New Blog 2", "New Blog 1"]);
       });
     });
   });
