@@ -12,6 +12,14 @@ describe("blog app", () => {
       },
     });
 
+    await request.post("/api/users", {
+      data: {
+        name: "other",
+        username: "other",
+        password: "secret",
+      },
+    });
+
     await page.goto("/");
   });
 
@@ -80,6 +88,17 @@ describe("blog app", () => {
         await blogDiv.getByRole("button", { name: "delete" }).click();
 
         await expect(page.getByText("New Blog 1")).not.toBeVisible();
+      });
+
+      test("users can't delete blogs of another", async ({ page }) => {
+        await page.getByRole("button", { name: "logout" }).click();
+        await loginWith(page, "other", "secret");
+        await page.getByText("other is logged in.").waitFor();
+
+        const blogDiv = await page.getByText("New Blog 1").locator("..");
+        await blogDiv.getByRole("button", { name: "view" }).click();
+        
+        await expect(blogDiv.getByRole("button", { name: "delete" })).not.toBeVisible();
       });
     });
   });
