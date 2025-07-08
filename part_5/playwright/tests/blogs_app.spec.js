@@ -50,11 +50,28 @@ describe("blog app", () => {
   describe("when logged in", () => {
     beforeEach(async ({ page }) => {
       await loginWith(page, "root", "secret");
+      await page.getByText("root is logged in.").waitFor();
     });
 
     test("a new blog can be created", async ({ page }) => {
       await createBlog(page, "New Blog", "New Author", "new.url.com");
       await expect(page.getByText("New Blog")).toBeVisible();
+    });
+
+    describe("and blogs exist", () => {
+      beforeEach(async ({ page }) => {
+        await createBlog(page, "New Blog 1", "New Author", "new.url-1.com");
+        await createBlog(page, "New Blog 2", "New Author", "new.url-2.com");
+      });
+
+      test("a blog can be liked", async ({ page }) => {
+        const blogDiv = await page.getByText("New Blog 1").locator("..");
+        await blogDiv.getByRole("button", { name: "view" }).click();
+        let likes = await page.getByText("likes: 0");
+        expect(likes).toContainText("likes: 0");
+        await blogDiv.getByRole("button", { name: "add" }).click();
+        await page.getByText("likes: 1").waitFor();
+      });
     });
   });
 });
