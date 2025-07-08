@@ -42,11 +42,11 @@ const Login = ({ onUserResponse }) => {
       <form onSubmit={onLoginClick}>
         <div>
           <span style={{ marginRight: 5 }}>username</span>
-          <input type="text" onChange={onUsernameChange} value={username} />
+          <input type="text" data-testid='username' onChange={onUsernameChange} value={username} />
         </div>
         <div>
           <span style={{ marginRight: 5 }}>password</span>
-          <input type="password" onChange={onPasswordChange} value={password} />
+          <input type="password" data-testid='password' onChange={onPasswordChange} value={password} />
         </div>
         <button type="submit" style={{ marginTop: 5 }}>Login</button>
       </form>

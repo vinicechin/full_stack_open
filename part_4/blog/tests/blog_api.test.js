@@ -17,20 +17,21 @@ describe("blog api", () => {
   beforeEach(async () => {
     await User.deleteMany({});
     const passwordHash = await bcrypt.hash("secret", 10);
-    const user = new User({ username: "root", passwordHash });
+    const user = new User({ username: "root", name: "root", passwordHash });
     await user.save();
-
-    initialBlogs = helper.initialBlogs(user._id);
-    await Blog.deleteMany({});
-    await Blog.insertMany(initialBlogs);
 
     const loginInfo = {
       username: user.username,
       password: "secret",
     };
 
-    const response = await api.post("/api/login").send(loginInfo);
-    token = response.body.token;
+    const loginResponse = await api.post("/api/login").send(loginInfo);
+    const userId = loginResponse.body.id;
+    token = loginResponse.body.token;
+
+    initialBlogs = helper.initialBlogs(userId);
+    await Blog.deleteMany({});
+    await Blog.insertMany(initialBlogs);
   });
 
   describe("blogs access and validity", () => {
@@ -52,6 +53,13 @@ describe("blog api", () => {
       const response = await api.get("/api/blogs");
 
       const ids = response.body.map((e) => e.id);
+      assert.strictEqual(ids.includes(undefined), false);
+    });
+
+    test("all blogs have a user field", async () => {
+      const response = await api.get("/api/blogs");
+
+      const ids = response.body.map((e) => e.user);
       assert.strictEqual(ids.includes(undefined), false);
     });
   });
@@ -83,6 +91,7 @@ describe("blog api", () => {
       assert.deepStrictEqual(addedBlog.author, newBlog.author);
       assert.deepStrictEqual(addedBlog.url, newBlog.url);
       assert.deepStrictEqual(addedBlog.likes, newBlog.likes);
+      assert.deepStrictEqual(addedBlog.user.id, newBlog.userId);
     });
 
     test("new blog without auth token can't be added", async () => {
@@ -127,20 +136,26 @@ describe("blog api", () => {
     });
 
     test("blog without title results in bad request", async () => {
+      const users = await helper.usersInDb();
+
       const newBlog = {
         author: "Added Test Author",
         url: "http://add.test.com",
         likes: 25,
+        userId: users[0].id,
       };
 
       await api.post("/api/blogs").set({ "authorization": "Bearer " + token }).send(newBlog).expect(400);
     });
 
     test("blog without url results in bad request", async () => {
+      const users = await helper.usersInDb();
+
       const newBlog = {
         title: "Added Test",
         author: "Added Test Author",
         likes: 25,
+        userId: users[0].id,
       };
 
       await api.post("/api/blogs").set({ "authorization": "Bearer " + token }).send(newBlog).expect(400);
@@ -177,6 +192,7 @@ describe("blog api", () => {
         author: blog.author,
         url: blog.url,
         likes: blog.likes,
+        userId: blog.user.id,
       }).expect(200);
 
       response = await api.get("/api/blogs");
@@ -192,6 +208,7 @@ describe("blog api", () => {
         author: blog.author,
         url: "http://changed-url.com",
         likes: blog.likes,
+        userId: blog.user.id,
       }).expect(200);
 
       response = await api.get("/api/blogs");
@@ -207,13 +224,14 @@ describe("blog api", () => {
         author: "New Author",
         url: blog.url,
         likes: blog.likes,
+        userId: blog.user.id,
       }).expect(200);
 
       response = await api.get("/api/blogs");
       assert.strictEqual(response.body.find((blog) => blog.author === "New Author")?.id, blog.id);
     });
 
-    test("can edit blog author", async () => {
+    test("can edit blog likes", async () => {
       let response = await api.get("/api/blogs");
       const blog = response.body[0];
 
@@ -222,6 +240,7 @@ describe("blog api", () => {
         author: blog.author,
         url: blog.url,
         likes: 100,
+        userId: blog.user.id,
       }).expect(200);
 
       response = await api.get("/api/blogs");
