@@ -1,12 +1,27 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { voteFor, filteredAnecdotes } from '../reducers/anecdoteReducer'
+import { setNotification } from '../reducers/notificationReducer'
 
 export function AnecdoteList() {
   const dispatch = useDispatch()
   const anecdotes = useSelector(filteredAnecdotes)
 
-  const vote = (id) => {
+  function vote(id) {
     dispatch(voteFor(id))
+
+    const content = anecdotes.find(a => a.id === id)?.content;
+    handleToast(`You voted for '${content}'`)
+  }
+
+  function handleToast(toastMessage) {
+    dispatch(setNotification({
+      message: toastMessage,
+      toastClass: 'success',
+    }))
+
+    setTimeout(() => {
+      dispatch(setNotification(null))
+    }, 3000);
   }
 
   return (
