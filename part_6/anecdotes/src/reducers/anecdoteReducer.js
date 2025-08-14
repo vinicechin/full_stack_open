@@ -1,4 +1,5 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
+import AnecdotesService from '../services/anecdotes'
 
 const anecdotesSlice = createSlice({
   name: 'anecdotes',
@@ -17,6 +18,27 @@ const anecdotesSlice = createSlice({
   }
 })
 
+function initAnecdotes() {
+  return async function (dispatch) {
+    const anecdotes = await AnecdotesService.getAll();
+    dispatch(setAnecdotes(anecdotes));
+  }
+}
+
+function createAnecdote(content) {
+  return async function (dispatch) {
+    const newAnecdote = await AnecdotesService.createAnecdote(content)
+    dispatch(appendAnecdote(newAnecdote))
+  }
+}
+
+// Async
+export {
+  initAnecdotes,
+  createAnecdote,
+}
+
+// Getters
 export const filteredAnecdotes = createSelector(
   state => state,
   state => state.anecdotes.filter(a => {
@@ -24,5 +46,8 @@ export const filteredAnecdotes = createSelector(
     }).sort((a, b) => b.votes - a.votes)
 );
 
+// Setters
 export const { appendAnecdote, voteFor, setAnecdotes } = anecdotesSlice.actions
+
+// Reducer
 export default anecdotesSlice.reducer
