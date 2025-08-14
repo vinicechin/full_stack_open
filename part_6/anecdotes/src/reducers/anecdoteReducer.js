@@ -8,17 +8,13 @@ const anecdotesSlice = createSlice({
     appendAnecdote(state, action) {
       state.push(action.payload)
     },
-    voteFor(state, action) {
-      const anecdote = state.find(obj => obj.id === action.payload)
-      anecdote.votes += 1
-    },
     setAnecdotes(_, action) {
       return action.payload;
     }
   }
 })
 
-function initAnecdotes() {
+function fetchAnecdotes() {
   return async function (dispatch) {
     const anecdotes = await AnecdotesService.getAll();
     dispatch(setAnecdotes(anecdotes));
@@ -32,10 +28,18 @@ function createAnecdote(content) {
   }
 }
 
+function voteFor(id) {
+  return async function (dispatch) {
+    await AnecdotesService.addVote(id)
+    dispatch(fetchAnecdotes())
+  }
+}
+
 // Async
 export {
-  initAnecdotes,
+  fetchAnecdotes as initAnecdotes,
   createAnecdote,
+  voteFor
 }
 
 // Getters
@@ -47,7 +51,7 @@ export const filteredAnecdotes = createSelector(
 );
 
 // Setters
-export const { appendAnecdote, voteFor, setAnecdotes } = anecdotesSlice.actions
+export const { appendAnecdote, setAnecdotes } = anecdotesSlice.actions
 
 // Reducer
 export default anecdotesSlice.reducer

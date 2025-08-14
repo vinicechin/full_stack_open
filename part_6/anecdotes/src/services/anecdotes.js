@@ -16,7 +16,20 @@ async function createAnecdote(content) {
   return res.data;
 }
 
+async function addVote(id) {
+  const res = await axios.get(`${baseUrl}/${id}`);
+
+  if (res.data) {
+    console.log(res.data.votes)
+    await axios.put(`${baseUrl}/${id}`, {
+      content: res.data.content,
+      votes: res.data.votes + 1,
+    });
+  }
+}
+
 export default {
   getAll,
   createAnecdote,
+  addVote,
 }
